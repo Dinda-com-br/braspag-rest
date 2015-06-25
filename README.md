@@ -1,4 +1,4 @@
-# Braspag::Rest
+# Braspag
 
 Gem to use Braspag gateway in his REST version.
 
