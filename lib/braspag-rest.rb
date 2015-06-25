@@ -1,0 +1,1 @@
+require "braspag-rest/version"
