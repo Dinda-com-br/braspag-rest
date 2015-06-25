@@ -6,5 +6,11 @@ module BraspagRest
   end
 end
 
-require "braspag-rest/version"
-require "braspag-rest/configuration"
+require 'hashie'
+require 'braspag-rest/hashie'
+require 'braspag-rest/version'
+require 'braspag-rest/configuration'
+require 'braspag-rest/customer'
+require 'braspag-rest/credit_card'
+require 'braspag-rest/payment'
+require 'braspag-rest/sale'
