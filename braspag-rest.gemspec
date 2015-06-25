@@ -4,7 +4,7 @@ require 'braspag-rest/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "braspag-rest"
-  spec.version       = Braspag::VERSION
+  spec.version       = BraspagRest::VERSION
   spec.authors       = ["Dinda Dev Team"]
   spec.email         = ["dev@dinda.com.br"]
 
@@ -16,6 +16,8 @@ Gem::Specification.new do |spec|
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.executables   = `git ls-files -- {test,spec,features}/*`.split("\n")
   spec.require_paths = ["lib"]
+
+  spec.add_dependency "rest-client", "~> 1.8"
 
   spec.add_development_dependency "bundler", "~> 1.10"
   spec.add_development_dependency "rake", "~> 10.0"

@@ -1,4 +1,4 @@
-# Braspag
+# BraspagRest
 
 [![Travis-CI](https://travis-ci.org/Dinda-com-br/braspag-rest.svg?branch=master)](https://travis-ci.org/Dinda-com-br/braspag-rest)
 

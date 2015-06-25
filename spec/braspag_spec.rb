@@ -1,7 +1,7 @@
 require 'spec_helper'
 
-describe Braspag do
+describe BraspagRest do
   it 'has a version number' do
-    expect(Braspag::VERSION).not_to be nil
+    expect(BraspagRest::VERSION).not_to be nil
   end
 end
