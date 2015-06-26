@@ -19,7 +19,8 @@ describe Hashie::IUTrash do
   it 'translates parameters according to declared on class' do
     expect(person.name).to eq('foo')
     expect(person.phone).to eq(123)
-    expect(person.main_address).to be_an_instance_of(Address)
+    expect(person.main_address.street).to eq('Rua 1')
+    expect(person.main_address.number).to eq(123)
   end
 
   it 'ignores undeclared parameters' do
@@ -29,6 +30,19 @@ describe Hashie::IUTrash do
   describe '#inverse_attributes' do
     it 'returns a hash with their properties using inverse translated' do
       expect(person.inverse_attributes).to eq(params)
+    end
+  end
+
+  describe '#build' do
+    let(:params) { { name: 'bar', phone: 321, main_address: { street: 'Rua 2', number: 321 } } }
+
+    subject(:person) { Person.build(params) }
+
+    it 'builds an object using original properties instead translations' do
+      expect(person.name).to eq('bar')
+      expect(person.phone).to eq(321)
+      expect(person.main_address.street).to eq('Rua 2')
+      expect(person.main_address.number).to eq(321)
     end
   end
 end
