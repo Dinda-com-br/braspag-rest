@@ -8,7 +8,8 @@ describe BraspagRest::CreditCard do
        'Brand' => 'Visa',
        'CardNumber' => '000000******0001',
        'Holder' => 'Teste Holder',
-       'CardToken' => '123456'
+       'CardToken' => '123456',
+       'SecurityCode' => 123
     }
   }
 
@@ -22,6 +23,7 @@ describe BraspagRest::CreditCard do
       expect(credit_card.number).to eq('000000******0001')
       expect(credit_card.holder).to eq('Teste Holder')
       expect(credit_card.token).to eq('123456')
+      expect(credit_card.security_code).to eq(123)
     end
   end
 end

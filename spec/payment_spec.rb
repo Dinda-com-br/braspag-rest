@@ -60,6 +60,8 @@ describe BraspagRest::Payment do
       expect(payment.provider).to eq('Simulado')
       expect(payment.installments).to eq(1)
       expect(payment.credit_card).to be_an_instance_of(BraspagRest::CreditCard)
+      expect(payment.status).to eq(1)
+      expect(payment.id).to eq('1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1')
     end
   end
 end
