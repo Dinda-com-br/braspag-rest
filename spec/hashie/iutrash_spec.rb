@@ -25,4 +25,10 @@ describe Hashie::IUTrash do
   it 'ignores undeclared parameters' do
     expect(Person.new('Weight' => 65)).to be_an_instance_of(Person)
   end
+
+  describe '#inverse_attributes' do
+    it 'returns a hash with their properties using inverse translated' do
+      expect(person.inverse_attributes).to eq(params)
+    end
+  end
 end
