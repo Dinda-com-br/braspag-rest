@@ -7,7 +7,11 @@ module BraspagRest
         gateway_response = RestClient.post(sale_url, params.to_json, default_headers.merge('RequestId' => request_id))
         BraspagRest::Response.new(gateway_response)
       rescue RestClient::ExceptionWithResponse => e
+        config.logger.warn("[BraspagRest] #{e} #slack") if config.log_enabled?
         BraspagRest::Response.new(e.response)
+      rescue RestClient::Exception => e
+        config.logger.error("[BraspagRest] #{e} #slack") if config.log_enabled?
+        raise
       end
 
       private

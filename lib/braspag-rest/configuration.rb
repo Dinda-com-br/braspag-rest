@@ -5,7 +5,7 @@ module BraspagRest
   class Configuration
     include Singleton
 
-    attr_accessor :environment, :logger, :config_file_path, :url
+    attr_accessor :environment, :logger, :config_file_path
 
     def config_file_path
       @config_file_path || 'config/braspag-rest.yml'
@@ -13,6 +13,10 @@ module BraspagRest
 
     def environment
       @environment || ENV['RACK_ENV'] || ENV['RAILS_ENV'] || raise('You must set the environment!')
+    end
+
+    def log_enabled?
+      config['log_enable'] && logger
     end
 
     def url
