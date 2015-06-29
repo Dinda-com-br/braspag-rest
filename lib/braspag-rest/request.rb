@@ -22,6 +22,7 @@ module BraspagRest
 
       def default_headers
         {
+          'Accept' => 'application/json',
           'Content-Type' => 'application/json',
           'MerchantId' => config.merchant_id,
           'MerchantKey' => config.merchant_key

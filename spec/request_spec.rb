@@ -18,6 +18,7 @@ describe BraspagRest::Request do
 
     let(:headers) {
       {
+        'Accept' => 'application/json',
         'Content-Type' => 'application/json',
         'MerchantId' => config['merchant_id'],
         'MerchantKey' => config['merchant_key'],
