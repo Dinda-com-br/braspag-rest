@@ -4,7 +4,7 @@ module Hashie
 
     def inverse_attributes
       {}.tap do |attributes|
-        self.class.translations.each do |(from, property)|
+        self.class.translations.each do |from, property|
           value = self.send(property)
           value = value.respond_to?(:inverse_attributes) ? value.inverse_attributes : value
           
