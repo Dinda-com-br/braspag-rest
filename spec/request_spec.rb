@@ -54,7 +54,7 @@ describe BraspagRest::Request do
 
       it 'returns a braspag unsuccessful response and log it as a warning' do
         allow(RestClient).to receive(:post).and_raise(RestClient::ExceptionWithResponse, gateway_response)
-        expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {} #slack")
+        expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {}")
 
         response = described_class.authorize(request_id, params)
         expect(response).not_to be_success
@@ -67,7 +67,7 @@ describe BraspagRest::Request do
 
       it 'raises the exception and log it as an error' do
         allow(RestClient).to receive(:post).and_raise(RestClient::Exception, gateway_response)
-        expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {} #slack")
+        expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {}")
 
         expect { described_class.authorize(request_id, params) }.to raise_error(RestClient::Exception)
       end
