@@ -92,7 +92,7 @@ describe BraspagRest::Sale do
 
     before { allow(BraspagRest::Request).to receive(:authorize).and_return(response) }
 
-    subject(:sale) { BraspagRest::Sale.build(attributes) }
+    subject(:sale) { BraspagRest::Sale.new(attributes) }
 
     context 'when the gateway returns a successful response' do
       let(:parsed_body) {

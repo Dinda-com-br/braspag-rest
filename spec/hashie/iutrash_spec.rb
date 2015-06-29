@@ -32,17 +32,4 @@ describe Hashie::IUTrash do
       expect(person.inverse_attributes).to eq(params)
     end
   end
-
-  describe '#build' do
-    let(:params) { { name: 'bar', phone: 321, main_address: { street: 'Rua 2', number: 321 } } }
-
-    subject(:person) { Person.build(params) }
-
-    it 'builds an object using original properties instead translations' do
-      expect(person.name).to eq('bar')
-      expect(person.phone).to eq(321)
-      expect(person.main_address.street).to eq('Rua 2')
-      expect(person.main_address.number).to eq(321)
-    end
-  end
 end
