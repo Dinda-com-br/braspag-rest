@@ -22,7 +22,44 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Authorize an order
+
+```rb
+sale = BraspagRest::Sale.new(
+  order_id: '123456',
+  request_id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+  customer: {
+    name: 'Comprador Teste'
+  },
+  payment: {
+    type: 'CreditCard',
+    amount: 15700,
+    provider: 'Simulado',
+    installments: 1,
+    credit_card: {
+      number: '0000000000000001',
+      holder: 'Teste Holder',
+      expiration_date: '12/2021',
+      security_code: '123',
+      brand: 'Visa'
+    }
+  }
+)
+
+sale.save
+```
+
+And to create a protected credit card, you should set the credit card saved as true:
+
+```rb
+credit_card = BraspagRest::CreditCard.new
+credit_card.number = '0000000000000001'
+credit_card.holder = 'Teste Holder'
+credit_card.expiration_date = '12/2021'
+credit_card.security_code = '123'
+credit_card.brand = 'Visa'
+credit_card.saved = true
+```
 
 ## Development
 
