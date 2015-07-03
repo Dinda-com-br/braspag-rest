@@ -62,6 +62,10 @@ describe BraspagRest::Payment do
       expect(payment.credit_card).to be_an_instance_of(BraspagRest::CreditCard)
       expect(payment.status).to eq(1)
       expect(payment.id).to eq('1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1')
+      expect(payment.transaction_id).to eq('0625101832104')
+      expect(payment.authorization_code).to eq('058475')
+      expect(payment.reason_code).to eq(0)
+      expect(payment.reason_message).to eq('Successful')
     end
   end
 end
