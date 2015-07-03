@@ -15,5 +15,9 @@ module BraspagRest
     property :reason_message, from: 'ReasonMessage'
 
     coerce_key :credit_card, BraspagRest::CreditCard
+
+    def authorized?
+      status.to_i == 1
+    end
   end
 end

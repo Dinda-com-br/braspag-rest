@@ -68,4 +68,24 @@ describe BraspagRest::Payment do
       expect(payment.reason_message).to eq('Successful')
     end
   end
+
+  describe '#authorized?' do
+    subject(:sale) { BraspagRest::Payment.new(params) }
+
+    context 'when status is 1' do
+      let(:params) { { status: 1 } }
+
+      it 'returns authorized' do
+        expect(sale).to be_authorized
+      end
+    end
+
+    context 'when status is not 1' do
+      let(:params) { { status: 2 } }
+
+      it 'returns not authorized' do
+        expect(sale).not_to be_authorized
+      end
+    end
+  end
 end
