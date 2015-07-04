@@ -62,6 +62,30 @@ describe BraspagRest::Payment do
       expect(payment.credit_card).to be_an_instance_of(BraspagRest::CreditCard)
       expect(payment.status).to eq(1)
       expect(payment.id).to eq('1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1')
+      expect(payment.transaction_id).to eq('0625101832104')
+      expect(payment.authorization_code).to eq('058475')
+      expect(payment.reason_code).to eq(0)
+      expect(payment.reason_message).to eq('Successful')
+    end
+  end
+
+  describe '#authorized?' do
+    subject(:sale) { BraspagRest::Payment.new(params) }
+
+    context 'when status is 1' do
+      let(:params) { { status: 1 } }
+
+      it 'returns authorized' do
+        expect(sale).to be_authorized
+      end
+    end
+
+    context 'when status is not 1' do
+      let(:params) { { status: 2 } }
+
+      it 'returns not authorized' do
+        expect(sale).not_to be_authorized
+      end
     end
   end
 end
