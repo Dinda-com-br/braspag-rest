@@ -1,3 +1,5 @@
+require 'hashie/extensions/dash/property_translation'
+
 module Hashie
   class IUTrash < Hashie::IUDash
     include Hashie::Extensions::Dash::PropertyTranslation
