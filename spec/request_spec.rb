@@ -131,4 +131,48 @@ describe BraspagRest::Request do
       end
     end
   end
+
+  describe '.get_sale' do
+    let(:payment_id) { '123456' }
+    let(:search_url) { config['query_url'] + '/v2/sales/' + payment_id }
+    let(:request_id) { '30000000-0000-0000-0000-000000000001' }
+
+    let(:headers) {
+      {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'MerchantId' => config['merchant_id'],
+        'MerchantKey' => config['merchant_key'],
+        'RequestId' => request_id
+      }
+    }
+
+    context 'when is a successful response' do
+      let(:gateway_response) { double(code: 200, body: '{}') }
+
+      it 'calls sale void with request_id and amount' do
+        expect(RestClient).to receive(:get).with(search_url, {}, headers)
+        described_class.get_sale(request_id, payment_id)
+      end
+
+      it 'returns a braspag successful response' do
+        allow(RestClient).to receive(:get).and_return(gateway_response)
+
+        response = described_class.get_sale(request_id, payment_id)
+        expect(response).to be_success
+        expect(response.parsed_body).to eq({})
+      end
+    end
+
+    context 'when is a failure by resource not found exception' do
+      let(:gateway_response) { double(code: 404, body: '{}') }
+
+      it 'raises the exception and log it as an error' do
+        allow(RestClient).to receive(:get).and_raise(RestClient::ResourceNotFound, gateway_response)
+        expect(logger).to receive(:error).with("[BraspagRest] 404 Resource Not Found: {}")
+
+        expect { described_class.get_sale(request_id, payment_id) }.to raise_error(RestClient::ResourceNotFound)
+      end
+    end
+  end
 end

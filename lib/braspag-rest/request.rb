@@ -27,6 +27,14 @@ module BraspagRest
         raise
       end
 
+      def get_sale(request_id, payment_id)
+        gateway_response = RestClient.get(search_sale_url(payment_id), {}, default_headers.merge('RequestId' => request_id))
+        BraspagRest::Response.new(gateway_response)
+      rescue RestClient::ResourceNotFound => e
+        config.logger.error("[BraspagRest] #{e}") if config.log_enabled?
+        raise
+      end
+
       private
 
       def sale_url
@@ -35,6 +43,10 @@ module BraspagRest
 
       def void_url(payment_id)
         sale_url + payment_id.to_s + VOID_ENDPOINT
+      end
+
+      def search_sale_url(payment_id)
+        config.query_url + SALE_ENDPOINT + payment_id.to_s
       end
 
       def default_headers
