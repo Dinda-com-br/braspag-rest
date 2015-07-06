@@ -13,6 +13,12 @@ module BraspagRest
     coerce_key :customer, BraspagRest::Customer
     coerce_key :payment, BraspagRest::Payment
 
+    def self.find(request_id, payment_id)
+      response = BraspagRest::Request.get_sale(request_id, payment_id)
+
+      new(response.parsed_body)
+    end
+
     def save
       response = BraspagRest::Request.authorize(request_id, inverse_attributes)
 
