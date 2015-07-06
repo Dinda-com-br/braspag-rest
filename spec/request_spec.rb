@@ -175,4 +175,62 @@ describe BraspagRest::Request do
       end
     end
   end
+
+  describe '.capture' do
+    let(:payment_id) { '123456' }
+    let(:capture_url) { config['url'] + '/v2/sales/' + payment_id + '/capture' }
+    let(:request_id) { '30000000-0000-0000-0000-000000000001' }
+    let(:amount) { 100 }
+
+    let(:headers) {
+      {
+        'Accept' => 'application/json',
+        'Content-Type' => 'application/json',
+        'MerchantId' => config['merchant_id'],
+        'MerchantKey' => config['merchant_key'],
+        'RequestId' => request_id
+      }
+    }
+
+    context 'when is a successful response' do
+      let(:gateway_response) { double(code: 200, body: '{}') }
+
+      it 'calls sale capture with request_id and amount' do
+        expect(RestClient).to receive(:put).with(capture_url, { Amount: amount }.to_json, headers)
+        described_class.capture(request_id, payment_id, amount)
+      end
+
+      it 'returns a braspag successful response' do
+        allow(RestClient).to receive(:put).and_return(gateway_response)
+
+        response = described_class.capture(request_id, payment_id, amount)
+        expect(response).to be_success
+        expect(response.parsed_body).to eq({})
+      end
+    end
+
+    context 'when is a failure by invalid params' do
+      let(:gateway_response) { double(code: 400, body: '{}') }
+
+      it 'returns a braspag unsuccessful response and log it as a warning' do
+        allow(RestClient).to receive(:put).and_raise(RestClient::ExceptionWithResponse, gateway_response)
+        expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {}")
+
+        response = described_class.capture(request_id, payment_id, amount)
+        expect(response).not_to be_success
+        expect(response.parsed_body).to eq({})
+      end
+    end
+
+    context 'when is a failure by unexpected exception' do
+      let(:gateway_response) { double(code: 500, body: '{}') }
+
+      it 'raises the exception and log it as an error' do
+        allow(RestClient).to receive(:put).and_raise(RestClient::Exception, gateway_response)
+        expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {}")
+
+        expect { described_class.capture(request_id, payment_id, amount) }.to raise_error(RestClient::Exception)
+      end
+    end
+  end
 end
