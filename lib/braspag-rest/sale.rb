@@ -6,6 +6,8 @@ module BraspagRest
 
     attr_reader :errors
 
+    VOIDED = 10
+
     property :request_id, from: 'RequestId'
     property :order_id, from: 'MerchantOrderId'
     property :customer, from: 'Customer', with: ->(values) { BraspagRest::Customer.new(values) }
@@ -39,7 +41,7 @@ module BraspagRest
 
       if response.success?
         initialize_attributes('Payment' => response.parsed_body)
-        self.cancelled = true
+        self.cancelled = payment.status.eql?(VOIDED)
       else
         initialize_errors(response.parsed_body) and return false
       end
