@@ -61,17 +61,18 @@ credit_card.brand = 'Visa'
 credit_card.saved = true
 ```
 
-### Cancel an sale
+### Find a sale
 
 ```rb
-sale = BraspagRest::Sale.new(
-  request_id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
-  payment: {
-    id: 'yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy',
-    amount: 100
-  }
-)
+sale = BraspagRest::Sale.find('REQUEST_ID', 'PAYMENT_ID')
+sale.customer.name
+=> Maria
+```
 
+### Cancel a sale
+
+```rb
+sale = BraspagRest::Sale.find('REQUEST_ID', 'PAYMENT_ID')
 sale.cancel
 ```
 
