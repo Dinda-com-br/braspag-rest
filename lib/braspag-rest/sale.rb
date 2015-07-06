@@ -2,6 +2,8 @@ module BraspagRest
   class Sale < Hashie::IUTrash
     include Hashie::Extensions::Coercion
 
+    PAYMENT_CONFIRMED = 2
+
     attr_reader :errors
 
     property :request_id, from: 'RequestId'
@@ -9,6 +11,7 @@ module BraspagRest
     property :customer, from: 'Customer', with: ->(values) { BraspagRest::Customer.new(values) }
     property :payment, from: 'Payment', with: ->(values) { BraspagRest::Payment.new(values) }
     property :cancelled
+    property :captured
 
     coerce_key :customer, BraspagRest::Customer
     coerce_key :payment, BraspagRest::Payment
@@ -37,6 +40,17 @@ module BraspagRest
       if response.success?
         initialize_attributes('Payment' => response.parsed_body)
         self.cancelled = true
+      else
+        initialize_errors(response.parsed_body) and return false
+      end
+    end
+
+    def capture(amount = nil)
+      response = BraspagRest::Request.capture(request_id, payment.id, (amount || payment.amount))
+
+      if response.success?
+        initialize_attributes('Payment' => response.parsed_body)
+        self.captured = self.payment.status.eql?(PAYMENT_CONFIRMED)
       else
         initialize_errors(response.parsed_body) and return false
       end

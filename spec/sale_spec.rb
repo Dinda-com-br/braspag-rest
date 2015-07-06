@@ -169,6 +169,53 @@ describe BraspagRest::Sale do
     end
   end
 
+  describe '#capture' do
+    subject(:sale) { BraspagRest::Sale.new(request_id: 'xxx-xxx-xxx', payment: { id: 123, amount: 1000 }) }
+
+    it 'calls braspag gateway with request_id, payment_id and payment amount' do
+      expect(BraspagRest::Request).to receive(:capture).with('xxx-xxx-xxx', 123, 1000).and_return(double(success?: true, parsed_body: {}))
+
+      sale.capture
+    end
+
+    it 'calls braspag gateway with request_id, payment_id and amount parameter if it is not nil' do
+      expect(BraspagRest::Request).to receive(:capture).with('xxx-xxx-xxx', 123, 500).and_return(double(success?: true, parsed_body: {}))
+
+      sale.capture(500)
+    end
+
+    context 'when the gateway returns a successful response' do
+      let(:parsed_body) {
+        { 'Status' => 2 }
+      }
+
+      let(:response) { double(success?: true, parsed_body: parsed_body) }
+
+      before { allow(BraspagRest::Request).to receive(:capture).and_return(response) }
+
+      it 'returns true and fills the sale object with the return' do
+        expect(sale.capture).to be_truthy
+        expect(sale.captured).to be_truthy
+        expect(sale.payment.status).to eq(2)
+      end
+    end
+
+    context 'when the gateway returns a failure' do
+      let(:parsed_body) {
+        [{ 'Code' => 123, 'Message' => 'Amount cannot be null' }]
+      }
+
+      let(:response) { double(success?: false, parsed_body: parsed_body) }
+
+      before { allow(BraspagRest::Request).to receive(:capture).and_return(response) }
+
+      it 'returns false and fills the errors attribute' do
+        expect(sale.capture).to be_falsey
+        expect(sale.errors).to eq([{ code: 123, message: "Amount cannot be null" }])
+      end
+    end
+  end
+
   describe '.find' do
     before { allow(BraspagRest::Request).to receive(:get_sale).and_return(double(parsed_body: braspag_response)) }
 
