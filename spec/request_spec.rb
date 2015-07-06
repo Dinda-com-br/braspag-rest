@@ -151,7 +151,7 @@ describe BraspagRest::Request do
       let(:gateway_response) { double(code: 200, body: '{}') }
 
       it 'calls sale void with request_id and amount' do
-        expect(RestClient).to receive(:get).with(search_url, {}, headers)
+        expect(RestClient).to receive(:get).with(search_url, headers)
         described_class.get_sale(request_id, payment_id)
       end
 

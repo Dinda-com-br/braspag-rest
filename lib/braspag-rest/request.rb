@@ -28,7 +28,7 @@ module BraspagRest
       end
 
       def get_sale(request_id, payment_id)
-        gateway_response = RestClient.get(search_sale_url(payment_id), {}, default_headers.merge('RequestId' => request_id))
+        gateway_response = RestClient.get(search_sale_url(payment_id), default_headers.merge('RequestId' => request_id))
         BraspagRest::Response.new(gateway_response)
       rescue RestClient::ResourceNotFound => e
         config.logger.error("[BraspagRest] #{e}") if config.log_enabled?
