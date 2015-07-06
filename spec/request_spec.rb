@@ -94,12 +94,12 @@ describe BraspagRest::Request do
       let(:gateway_response) { double(code: 200, body: '{}') }
 
       it 'calls sale void with request_id and amount' do
-        expect(RestClient).to receive(:post).with(void_url, { Amount: amount }.to_json, headers)
+        expect(RestClient).to receive(:put).with(void_url, { Amount: amount }.to_json, headers)
         described_class.void(request_id, payment_id, amount)
       end
 
       it 'returns a braspag successful response' do
-        allow(RestClient).to receive(:post).and_return(gateway_response)
+        allow(RestClient).to receive(:put).and_return(gateway_response)
 
         response = described_class.void(request_id, payment_id, amount)
         expect(response).to be_success
@@ -111,7 +111,7 @@ describe BraspagRest::Request do
       let(:gateway_response) { double(code: 400, body: '{}') }
 
       it 'returns a braspag unsuccessful response and log it as a warning' do
-        allow(RestClient).to receive(:post).and_raise(RestClient::ExceptionWithResponse, gateway_response)
+        allow(RestClient).to receive(:put).and_raise(RestClient::ExceptionWithResponse, gateway_response)
         expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {}")
 
         response = described_class.void(request_id, payment_id, amount)
@@ -124,7 +124,7 @@ describe BraspagRest::Request do
       let(:gateway_response) { double(code: 500, body: '{}') }
 
       it 'raises the exception and log it as an error' do
-        allow(RestClient).to receive(:post).and_raise(RestClient::Exception, gateway_response)
+        allow(RestClient).to receive(:put).and_raise(RestClient::Exception, gateway_response)
         expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {}")
 
         expect { described_class.void(request_id, payment_id, amount) }.to raise_error(RestClient::Exception)

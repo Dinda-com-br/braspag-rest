@@ -17,7 +17,7 @@ module BraspagRest
 
       def void(request_id, payment_id, amount)
         params = { Amount: amount }.to_json
-        gateway_response = RestClient.post(void_url(payment_id), params, default_headers.merge('RequestId' => request_id))
+        gateway_response = RestClient.put(void_url(payment_id), params, default_headers.merge('RequestId' => request_id))
         BraspagRest::Response.new(gateway_response)
       rescue RestClient::ExceptionWithResponse => e
         config.logger.warn("[BraspagRest] #{e}") if config.log_enabled?
@@ -34,7 +34,7 @@ module BraspagRest
       end
 
       def void_url(payment_id)
-        sale_url + payment_id + VOID_ENDPOINT
+        sale_url + payment_id.to_s + VOID_ENDPOINT
       end
 
       def default_headers

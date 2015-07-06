@@ -123,7 +123,6 @@ describe BraspagRest::Sale do
   end
 
   describe '#cancel' do
-
     subject(:sale) { BraspagRest::Sale.new(request_id: 'xxx-xxx-xxx', payment: { id: 123, amount: 1000 }) }
 
     it 'calls braspag gateway with request_id, payment_id and payment amount' do
