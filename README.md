@@ -61,6 +61,20 @@ credit_card.brand = 'Visa'
 credit_card.saved = true
 ```
 
+### Cancel an sale
+
+```rb
+sale = BraspagRest::Sale.new(
+  request_id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+  payment: {
+    id: 'yyyyyyyy-yyyy-yyyy-yyyy-yyyyyyyyyyyy',
+    amount: 100
+  }
+)
+
+sale.cancel
+```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake rspec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
