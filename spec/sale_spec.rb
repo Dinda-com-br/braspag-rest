@@ -148,7 +148,6 @@ describe BraspagRest::Sale do
 
       it 'returns true and fills the sale object with the return' do
         expect(sale.cancel).to be_truthy
-        expect(sale.cancelled).to be_truthy
         expect(sale.payment.status).to eq(10)
       end
     end
@@ -195,7 +194,6 @@ describe BraspagRest::Sale do
 
       it 'returns true and fills the sale object with the return' do
         expect(sale.capture).to be_truthy
-        expect(sale.captured).to be_truthy
         expect(sale.payment.status).to eq(2)
       end
     end
