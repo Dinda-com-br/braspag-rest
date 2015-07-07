@@ -34,7 +34,7 @@ module BraspagRest
       response = BraspagRest::Request.void(request_id, payment.id, (amount || payment.amount))
 
       if response.success?
-        initialize_attributes('Payment' => response.parsed_body)
+        self.payment.initialize_attributes(response.parsed_body)
       else
         initialize_errors(response.parsed_body) and return false
       end
@@ -46,7 +46,7 @@ module BraspagRest
       response = BraspagRest::Request.capture(request_id, payment.id, (amount || payment.amount))
 
       if response.success?
-        initialize_attributes('Payment' => response.parsed_body)
+        self.payment.initialize_attributes(response.parsed_body)
       else
         initialize_errors(response.parsed_body) and return false
       end
