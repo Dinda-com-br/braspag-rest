@@ -2,6 +2,10 @@ module BraspagRest
   class Payment < Hashie::IUTrash
     include Hashie::Extensions::Coercion
 
+    STATUS_AUTHORIZED = 1
+    STATUS_CONFIRMED = 2
+    STATUS_VOIDED = 10
+
     property :id, from: 'PaymentId'
     property :type, from: 'Type'
     property :amount, from: 'Amount'
@@ -17,7 +21,15 @@ module BraspagRest
     coerce_key :credit_card, BraspagRest::CreditCard
 
     def authorized?
-      status.to_i == 1
+      status.to_i.eql?(STATUS_AUTHORIZED)
+    end
+
+    def captured?
+      status.to_i.eql?(STATUS_CONFIRMED)
+    end
+
+    def cancelled?
+      status.to_i.eql?(STATUS_VOIDED)
     end
   end
 end

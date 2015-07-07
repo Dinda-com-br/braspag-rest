@@ -88,4 +88,44 @@ describe BraspagRest::Payment do
       end
     end
   end
+
+  describe '#captured?' do
+    subject(:sale) { BraspagRest::Payment.new(params) }
+
+    context 'when status is 2' do
+      let(:params) { { status: 2 } }
+
+      it 'returns captured' do
+        expect(sale).to be_captured
+      end
+    end
+
+    context 'when status is not 2' do
+      let(:params) { { status: 3 } }
+
+      it 'returns not captured' do
+        expect(sale).not_to be_captured
+      end
+    end
+  end
+
+  describe '#cancelled?' do
+    subject(:sale) { BraspagRest::Payment.new(params) }
+
+    context 'when status is 10' do
+      let(:params) { { status: 10 } }
+
+      it 'returns cancelled' do
+        expect(sale).to be_cancelled
+      end
+    end
+
+    context 'when status is not 10' do
+      let(:params) { { status: 3 } }
+
+      it 'returns not cancelled' do
+        expect(sale).not_to be_cancelled
+      end
+    end
+  end
 end

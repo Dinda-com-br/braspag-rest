@@ -1,63 +1,63 @@
 require 'spec_helper'
 
 describe BraspagRest::Sale do
-  describe '.new' do
-    let(:braspag_response) {
-      {
-         'Payment' => {
-            'ReasonMessage' => 'Successful',
-            'Interest' => 'ByMerchant',
-            'Links' => [
-               {
-                  'Href' => 'https=>//apiqueryhomolog.braspag.com.br/v2/sales/1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1',
-                  'Method' => 'GET',
-                  'Rel' => 'self'
-               },
-               {
-                  'Method' => 'PUT',
-                  'Href' => 'https=>//apihomolog.braspag.com.br/v2/sales/1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1/capture',
-                  'Rel' => 'capture'
-               },
-               {
-                  'Rel' => 'void',
-                  'Href' => 'https=>//apihomolog.braspag.com.br/v2/sales/1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1/void',
-                  'Method' => 'PUT'
-               }
-            ],
-            'ServiceTaxAmount' => 0,
-            'Country' => 'BRA',
-            'AcquirerTransactionId' => '0625101832104',
-            'CreditCard' => {
-               'ExpirationDate' => '12/2021',
-               'SaveCard' => false,
-               'Brand' => 'Visa',
-               'CardNumber' => '000000******0001',
-               'Holder' => 'Teste Holder'
-            },
-            'ReceivedDate' => '2015-06-25 10=>18=>32',
-            'ProviderReturnCode' => '4',
-            'ReasonCode' => 0,
-            'ProofOfSale' => '1832104',
-            'Capture' => false,
-            'Provider' => 'Simulado',
-            'Currency' => 'BRL',
-            'ProviderReturnMessage' => 'Operation Successful',
-            'Amount' => 15700,
-            'Type' => 'CreditCard',
-            'AuthorizationCode' => '058475',
-            'PaymentId' => '1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1',
-            'Authenticate' => false,
-            'Installments' => 1,
-            'Recurrent' => false,
-            'Status' => 1
-         },
-         'MerchantOrderId' => '18288',
-         'Customer' => {
-            'Name' => 'Comprador Teste'
-         }
-      }
+  let(:braspag_response) {
+    {
+       'Payment' => {
+          'ReasonMessage' => 'Successful',
+          'Interest' => 'ByMerchant',
+          'Links' => [
+             {
+                'Href' => 'https=>//apiqueryhomolog.braspag.com.br/v2/sales/1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1',
+                'Method' => 'GET',
+                'Rel' => 'self'
+             },
+             {
+                'Method' => 'PUT',
+                'Href' => 'https=>//apihomolog.braspag.com.br/v2/sales/1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1/capture',
+                'Rel' => 'capture'
+             },
+             {
+                'Rel' => 'void',
+                'Href' => 'https=>//apihomolog.braspag.com.br/v2/sales/1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1/void',
+                'Method' => 'PUT'
+             }
+          ],
+          'ServiceTaxAmount' => 0,
+          'Country' => 'BRA',
+          'AcquirerTransactionId' => '0625101832104',
+          'CreditCard' => {
+             'ExpirationDate' => '12/2021',
+             'SaveCard' => false,
+             'Brand' => 'Visa',
+             'CardNumber' => '000000******0001',
+             'Holder' => 'Teste Holder'
+          },
+          'ReceivedDate' => '2015-06-25 10=>18=>32',
+          'ProviderReturnCode' => '4',
+          'ReasonCode' => 0,
+          'ProofOfSale' => '1832104',
+          'Capture' => false,
+          'Provider' => 'Simulado',
+          'Currency' => 'BRL',
+          'ProviderReturnMessage' => 'Operation Successful',
+          'Amount' => 15700,
+          'Type' => 'CreditCard',
+          'AuthorizationCode' => '058475',
+          'PaymentId' => '1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1',
+          'Authenticate' => false,
+          'Installments' => 1,
+          'Recurrent' => false,
+          'Status' => 1
+       },
+       'MerchantOrderId' => '18288',
+       'Customer' => {
+          'Name' => 'Comprador Teste'
+       }
     }
+  }
 
+  describe '.new' do
     subject(:sale) { BraspagRest::Sale.new(braspag_response) }
 
     it 'initializes a sale using braspag response format' do
@@ -119,6 +119,115 @@ describe BraspagRest::Sale do
         expect(sale.save).to be_falsey
         expect(sale.errors).to eq([{ code: 123, message: "MerchantOrderId cannot be null" }])
       end
+    end
+  end
+
+  describe '#cancel' do
+    subject(:sale) { BraspagRest::Sale.new(request_id: 'xxx-xxx-xxx', payment: { id: 123, amount: 1000 }) }
+
+    it 'calls braspag gateway with request_id, payment_id and payment amount' do
+      expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 1000).and_return(double(success?: true, parsed_body: {}))
+
+      sale.cancel
+    end
+
+    it 'calls braspag gateway with request_id, payment_id and amount parameter if it is not nil' do
+      expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 500).and_return(double(success?: true, parsed_body: {}))
+
+      sale.cancel(500)
+    end
+
+    context 'when the gateway returns a successful response' do
+      let(:parsed_body) {
+        { 'Status' => 10 }
+      }
+
+      let(:response) { double(success?: true, parsed_body: parsed_body) }
+
+      before { allow(BraspagRest::Request).to receive(:void).and_return(response) }
+
+      it 'returns true and fills the sale object with the return' do
+        expect(sale.cancel).to be_truthy
+        expect(sale.payment.status).to eq(10)
+      end
+    end
+
+    context 'when the gateway returns a failure' do
+      let(:parsed_body) {
+        [{ 'Code' => 123, 'Message' => 'Amount cannot be null' }]
+      }
+
+      let(:response) { double(success?: false, parsed_body: parsed_body) }
+
+      before { allow(BraspagRest::Request).to receive(:void).and_return(response) }
+
+      it 'returns false and fills the errors attribute' do
+        expect(sale.cancel).to be_falsey
+        expect(sale.errors).to eq([{ code: 123, message: "Amount cannot be null" }])
+      end
+    end
+  end
+
+  describe '#capture' do
+    subject(:sale) { BraspagRest::Sale.new(request_id: 'xxx-xxx-xxx', payment: { id: 123, amount: 1000 }) }
+
+    it 'calls braspag gateway with request_id, payment_id and payment amount' do
+      expect(BraspagRest::Request).to receive(:capture).with('xxx-xxx-xxx', 123, 1000).and_return(double(success?: true, parsed_body: {}))
+
+      sale.capture
+    end
+
+    it 'calls braspag gateway with request_id, payment_id and amount parameter if it is not nil' do
+      expect(BraspagRest::Request).to receive(:capture).with('xxx-xxx-xxx', 123, 500).and_return(double(success?: true, parsed_body: {}))
+
+      sale.capture(500)
+    end
+
+    context 'when the gateway returns a successful response' do
+      let(:parsed_body) {
+        { 'Status' => 2 }
+      }
+
+      let(:response) { double(success?: true, parsed_body: parsed_body) }
+
+      before { allow(BraspagRest::Request).to receive(:capture).and_return(response) }
+
+      it 'returns true and fills the sale object with the return' do
+        expect(sale.capture).to be_truthy
+        expect(sale.payment.status).to eq(2)
+      end
+    end
+
+    context 'when the gateway returns a failure' do
+      let(:parsed_body) {
+        [{ 'Code' => 123, 'Message' => 'Amount cannot be null' }]
+      }
+
+      let(:response) { double(success?: false, parsed_body: parsed_body) }
+
+      before { allow(BraspagRest::Request).to receive(:capture).and_return(response) }
+
+      it 'returns false and fills the errors attribute' do
+        expect(sale.capture).to be_falsey
+        expect(sale.errors).to eq([{ code: 123, message: "Amount cannot be null" }])
+      end
+    end
+  end
+
+  describe '.find' do
+    before { allow(BraspagRest::Request).to receive(:get_sale).and_return(double(parsed_body: braspag_response)) }
+
+    it 'calls braspag gateway with request_id and payment_id' do
+      expect(BraspagRest::Request).to receive(:get_sale).with('xxx-xxx-xxx', 123).and_return(double(parsed_body: braspag_response))
+
+      BraspagRest::Sale.find('xxx-xxx-xxx', 123)
+    end
+
+    it 'returns a populated sales object' do
+      sale = BraspagRest::Sale.find('xxx-xxx-xxx', 123)
+      expect(sale.order_id).to eq('18288')
+      expect(sale.payment).to be_an_instance_of(BraspagRest::Payment)
+      expect(sale.customer).to be_an_instance_of(BraspagRest::Customer)
     end
   end
 end

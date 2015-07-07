@@ -12,6 +12,12 @@ module BraspagRest
     coerce_key :customer, BraspagRest::Customer
     coerce_key :payment, BraspagRest::Payment
 
+    def self.find(request_id, payment_id)
+      response = BraspagRest::Request.get_sale(request_id, payment_id)
+
+      new(response.parsed_body)
+    end
+
     def save
       response = BraspagRest::Request.authorize(request_id, inverse_attributes)
 
@@ -24,10 +30,34 @@ module BraspagRest
       true
     end
 
+    def cancel(amount = nil)
+      response = BraspagRest::Request.void(request_id, payment.id, (amount || payment.amount))
+
+      if response.success?
+        initialize_attributes('Payment' => response.parsed_body)
+      else
+        initialize_errors(response.parsed_body) and return false
+      end
+
+      payment.cancelled?
+    end
+
+    def capture(amount = nil)
+      response = BraspagRest::Request.capture(request_id, payment.id, (amount || payment.amount))
+
+      if response.success?
+        initialize_attributes('Payment' => response.parsed_body)
+      else
+        initialize_errors(response.parsed_body) and return false
+      end
+
+      payment.captured?
+    end
+
     private
 
     def initialize_errors(errors)
-      @errors = errors.map{ |error| { code: error['Code'], message: error['Message'] } }
+      @errors = errors.map { |error| { code: error['Code'], message: error['Message'] } }
     end
   end
 end
