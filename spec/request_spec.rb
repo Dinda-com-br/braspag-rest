@@ -168,8 +168,8 @@ describe BraspagRest::Request do
       let(:gateway_response) { double(code: 404, body: '{}') }
 
       it 'raises the exception and log it as an error' do
-        allow(RestClient).to receive(:get).and_raise(RestClient::ResourceNotFound, gateway_response)
-        expect(logger).to receive(:error).with("[BraspagRest] 404 Resource Not Found: {}")
+        allow(RestClient).to receive(:get).and_raise(RestClient::ResourceNotFound)
+        expect(logger).to receive(:error).with("[BraspagRest] Resource Not Found: ")
 
         expect { described_class.get_sale(request_id, payment_id) }.to raise_error(RestClient::ResourceNotFound)
       end

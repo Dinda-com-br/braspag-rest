@@ -6,40 +6,37 @@ module BraspagRest
       CAPTURE_ENDPOINT = '/capture'
 
       def authorize(request_id, params)
-        gateway_response = RestClient.post(sale_url, params.to_json, default_headers.merge('RequestId' => request_id))
-        BraspagRest::Response.new(gateway_response)
-      rescue RestClient::ExceptionWithResponse => e
-        config.logger.warn("[BraspagRest] #{e}") if config.log_enabled?
-        BraspagRest::Response.new(e.response)
-      rescue RestClient::Exception => e
-        config.logger.error("[BraspagRest] #{e}") if config.log_enabled?
-        raise
+        execute_braspag_request do
+          RestClient.post(sale_url, params.to_json, default_headers.merge('RequestId' => request_id))
+        end
       end
 
       def void(request_id, payment_id, amount)
-        params = { Amount: amount }.to_json
-        gateway_response = RestClient.put(void_url(payment_id), params, default_headers.merge('RequestId' => request_id))
-        BraspagRest::Response.new(gateway_response)
-      rescue RestClient::ExceptionWithResponse => e
-        config.logger.warn("[BraspagRest] #{e}") if config.log_enabled?
-        BraspagRest::Response.new(e.response)
-      rescue RestClient::Exception => e
-        config.logger.error("[BraspagRest] #{e}") if config.log_enabled?
-        raise
+        execute_braspag_request do
+          RestClient.put(void_url(payment_id), { Amount: amount }.to_json, default_headers.merge('RequestId' => request_id))
+        end
       end
 
       def get_sale(request_id, payment_id)
-        gateway_response = RestClient.get(search_sale_url(payment_id), default_headers.merge('RequestId' => request_id))
+        execute_braspag_request do
+          RestClient.get(search_sale_url(payment_id), default_headers.merge('RequestId' => request_id))
+        end
+      end
+
+      def capture(request_id, payment_id, amount)
+        execute_braspag_request do
+          RestClient.put(capture_url(payment_id), { Amount: amount }.to_json, default_headers.merge('RequestId' => request_id))
+        end
+      end
+
+      private
+
+      def execute_braspag_request(&block)
+        gateway_response = block.call
         BraspagRest::Response.new(gateway_response)
       rescue RestClient::ResourceNotFound => e
         config.logger.error("[BraspagRest] #{e}") if config.log_enabled?
         raise
-      end
-
-      def capture(request_id, payment_id, amount)
-        params = { Amount: amount }.to_json
-        gateway_response = RestClient.put(capture_url(payment_id), params, default_headers.merge('RequestId' => request_id))
-        BraspagRest::Response.new(gateway_response)
       rescue RestClient::ExceptionWithResponse => e
         config.logger.warn("[BraspagRest] #{e}") if config.log_enabled?
         BraspagRest::Response.new(e.response)
@@ -47,8 +44,6 @@ module BraspagRest
         config.logger.error("[BraspagRest] #{e}") if config.log_enabled?
         raise
       end
-
-      private
 
       def sale_url
         config.url + SALE_ENDPOINT
