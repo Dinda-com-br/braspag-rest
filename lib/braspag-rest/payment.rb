@@ -15,6 +15,7 @@ module BraspagRest
     property :credit_card, from: 'CreditCard', with: ->(values) { BraspagRest::CreditCard.new(values) }
     property :transaction_id, from: 'AcquirerTransactionId'
     property :authorization_code, from: 'AuthorizationCode'
+    property :proof_of_sale, from: 'ProofOfSale'
     property :reason_code, from: 'ReasonCode'
     property :reason_message, from: 'ReasonMessage'
 
