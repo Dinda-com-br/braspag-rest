@@ -234,4 +234,28 @@ describe BraspagRest::Sale do
       expect(sale.customer).to be_an_instance_of(BraspagRest::Customer)
     end
   end
+
+  describe '#reload' do
+    before { allow(BraspagRest::Request).to receive(:get_sale).and_return(double(parsed_body: braspag_response)) }
+
+    it 'returns itself if request_id or payment_id is blank' do
+      sale = BraspagRest::Sale.new
+      expect(sale.reload).to eq(sale)
+
+      sale.request_id = 'xxxx-xxxx-xxxx-xxx'
+      expect(sale.reload).to eq(sale)
+
+      sale.payment = { id: 123 }
+      sale.request_id = nil
+      expect(sale.reload).to eq(sale)
+    end
+
+    it 'returns a new object loaded from braspag find' do
+      sale = BraspagRest::Sale.new(request_id: 'xxxxx-xxxxx-xxxxx-xxxxx', payment: { id: 123 })
+      sale = sale.reload
+      expect(sale.order_id).to eq('18288')
+      expect(sale.payment).to be_an_instance_of(BraspagRest::Payment)
+      expect(sale.customer).to be_an_instance_of(BraspagRest::Customer)
+    end
+  end
 end
