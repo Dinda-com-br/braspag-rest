@@ -54,6 +54,14 @@ module BraspagRest
       payment.captured?
     end
 
+    def reload
+      if !request_id.nil? && payment && !payment.id.nil?
+        self.class.find(request_id, payment.id)
+      else
+        self
+      end
+    end
+
     private
 
     def initialize_errors(errors)
