@@ -232,6 +232,7 @@ describe BraspagRest::Sale do
       expect(sale.order_id).to eq('18288')
       expect(sale.payment).to be_an_instance_of(BraspagRest::Payment)
       expect(sale.customer).to be_an_instance_of(BraspagRest::Customer)
+      expect(sale.request_id).to eq('xxx-xxx-xxx')
     end
   end
 

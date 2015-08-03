@@ -15,7 +15,7 @@ module BraspagRest
     def self.find(request_id, payment_id)
       response = BraspagRest::Request.get_sale(request_id, payment_id)
 
-      new(response.parsed_body)
+      new(response.parsed_body.merge('RequestId' => request_id))
     end
 
     def save
