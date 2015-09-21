@@ -31,7 +31,7 @@ module BraspagRest
     end
 
     def cancel(amount = nil)
-      response = BraspagRest::Request.void(request_id, payment.id, (amount || payment.amount))
+      response = BraspagRest::Request.void(request_id, payment.id, amount)
 
       if response.success?
         self.payment.initialize_attributes(response.parsed_body)

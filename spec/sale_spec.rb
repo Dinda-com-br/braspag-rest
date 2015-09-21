@@ -125,16 +125,20 @@ describe BraspagRest::Sale do
   describe '#cancel' do
     subject(:sale) { BraspagRest::Sale.new(request_id: 'xxx-xxx-xxx', payment: { id: 123, amount: 1000 }) }
 
-    it 'calls braspag gateway with request_id, payment_id and payment amount' do
-      expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 1000).and_return(double(success?: true, parsed_body: {}))
+    context "when no amount is given" do
+      it 'calls braspag gateway with request_id, payment_id and no payment amount' do
+        expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, nil).and_return(double(success?: true, parsed_body: {}))
 
-      sale.cancel
+        sale.cancel
+      end
     end
 
-    it 'calls braspag gateway with request_id, payment_id and amount parameter if it is not nil' do
-      expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 500).and_return(double(success?: true, parsed_body: {}))
+    context "when an amount is given" do
+      it 'calls braspag gateway with request_id, payment_id and amount parameter' do
+        expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 500).and_return(double(success?: true, parsed_body: {}))
 
-      sale.cancel(500)
+        sale.cancel(500)
+      end
     end
 
     context 'when the gateway returns a successful response' do
