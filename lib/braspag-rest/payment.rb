@@ -18,6 +18,7 @@ module BraspagRest
     property :proof_of_sale, from: 'ProofOfSale'
     property :reason_code, from: 'ReasonCode'
     property :reason_message, from: 'ReasonMessage'
+    property :voided_amount, from: 'VoidedAmount'
 
     coerce_key :credit_card, BraspagRest::CreditCard
 
