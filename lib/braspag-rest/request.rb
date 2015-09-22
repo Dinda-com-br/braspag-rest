@@ -13,7 +13,7 @@ module BraspagRest
 
       def void(request_id, payment_id, amount)
         execute_braspag_request do
-          RestClient.put(void_url(payment_id), { Amount: amount }.to_json, default_headers.merge('RequestId' => request_id))
+          RestClient.put(void_url(payment_id, amount), nil, default_headers.merge('RequestId' => request_id))
         end
       end
 
@@ -49,8 +49,8 @@ module BraspagRest
         config.url + SALE_ENDPOINT
       end
 
-      def void_url(payment_id)
-        sale_url + payment_id.to_s + VOID_ENDPOINT
+      def void_url(payment_id, amount)
+        sale_url + payment_id.to_s + VOID_ENDPOINT + (amount ? "?amount=#{amount}" : '')
       end
 
       def search_sale_url(payment_id)

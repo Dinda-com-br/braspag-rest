@@ -76,9 +76,8 @@ describe BraspagRest::Request do
 
   describe '.void' do
     let(:payment_id) { '123456' }
-    let(:void_url) { config['url'] + '/v2/sales/' + payment_id + '/void' }
     let(:request_id) { '30000000-0000-0000-0000-000000000001' }
-    let(:amount) { 100 }
+    let(:amount) { nil }
 
     let(:headers) {
       {
@@ -90,13 +89,27 @@ describe BraspagRest::Request do
       }
     }
 
-    context 'when is a successful response' do
-      let(:gateway_response) { double(code: 200, body: '{}') }
+    context "when no amount is given" do
+      let(:void_url) { config['url'] + '/v2/sales/' + payment_id + '/void' }
 
-      it 'calls sale void with request_id and amount' do
-        expect(RestClient).to receive(:put).with(void_url, { Amount: amount }.to_json, headers)
+      it 'does not specify an amount to be voided' do
+        expect(RestClient).to receive(:put).with(void_url, nil, headers)
         described_class.void(request_id, payment_id, amount)
       end
+    end
+
+    context "when an amount is given" do
+      let(:void_url) { config['url'] + '/v2/sales/' + payment_id + "/void?amount=#{amount}" }
+      let(:amount) { 100 }
+
+      it 'includes specific amount to void in request' do
+        expect(RestClient).to receive(:put).with(void_url, nil, headers)
+        described_class.void(request_id, payment_id, amount)
+      end
+    end
+
+    context 'when is a successful response' do
+      let(:gateway_response) { double(code: 200, body: '{}') }
 
       it 'returns a braspag successful response' do
         allow(RestClient).to receive(:put).and_return(gateway_response)
