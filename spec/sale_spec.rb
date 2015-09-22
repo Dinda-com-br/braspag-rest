@@ -126,35 +126,53 @@ describe BraspagRest::Sale do
     subject(:sale) { BraspagRest::Sale.new(request_id: 'xxx-xxx-xxx', payment: { id: 123, amount: 1000 }) }
 
     context "when no amount is given" do
+      before do
+        allow(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, nil)
+          .and_return(double(success?: true, parsed_body: {}))
+      end
+
       it 'calls braspag gateway with request_id, payment_id and no payment amount' do
         expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, nil).and_return(double(success?: true, parsed_body: {}))
-
         sale.cancel
+      end
+
+      it "updates the sale's voided amount with the full transaction amount" do
+        sale.cancel
+        expect(sale.payment.voided_amount).to eq(1000)
+      end
+
+      it "reports success" do
+        expect(sale.cancel).to be_truthy
       end
     end
 
     context "when an amount is given" do
+      before do
+        allow(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 500)
+          .and_return(double(success?: true, parsed_body: {}))
+      end
+
       it 'calls braspag gateway with request_id, payment_id and amount parameter' do
         expect(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, 500).and_return(double(success?: true, parsed_body: {}))
-
         sale.cancel(500)
       end
-    end
 
-    context 'when the gateway returns a successful response' do
-      let(:parsed_body) {
-        { 'Status' => 10 }
-      }
+      it "updates the sale's voided amount with the requested refund amount" do
+        sale.cancel(500)
+        expect(sale.payment.voided_amount).to eq(500)
+      end
 
-      let(:response) { double(success?: true, parsed_body: parsed_body) }
+      it "reports success" do
+        expect(sale.cancel(500)).to be_truthy
+      end
 
-      before { allow(BraspagRest::Request).to receive(:void).and_return(response) }
+      context "and some amount has already been refunded" do
+        before { sale.payment.voided_amount = 300 }
 
-      it 'returns true and fills the sale object with the return' do
-        expect(sale.cancel).to be_truthy
-        expect(sale.payment.status).to eq(10)
-        expect(sale.payment.id).to eq(123)
-        expect(sale.payment.amount).to eq(1000)
+        it "updates the sale's voided amount with the summed refund amount" do
+          sale.cancel(500)
+          expect(sale.payment.voided_amount).to eq(800)
+        end
       end
     end
 

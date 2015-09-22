@@ -34,12 +34,13 @@ module BraspagRest
       response = BraspagRest::Request.void(request_id, payment.id, amount)
 
       if response.success?
-        self.payment.initialize_attributes(response.parsed_body)
+        voided_amount = amount ? payment.voided_amount.to_i + amount : payment.amount
+        self.payment.initialize_attributes(voided_amount: voided_amount)
       else
         initialize_errors(response.parsed_body) and return false
       end
 
-      payment.cancelled?
+      response.success?
     end
 
     def capture(amount = nil)
