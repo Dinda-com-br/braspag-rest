@@ -20,6 +20,10 @@ module BraspagRest
     property :reason_message, from: 'ReasonMessage'
     property :voided_amount, from: 'VoidedAmount'
 
+    property :digitable_line, from: 'DigitableLine'
+    property :barcode_number, from: 'BarCodeNumber'
+    property :printable_page_url, from: 'Url'
+
     coerce_key :credit_card, BraspagRest::CreditCard
 
     def authorized?
