@@ -64,7 +64,7 @@ describe BraspagRest::Payment do
       'DigitableLine' => '00099.99921 50000.000005 07999.999902 3 65720000001150',
       'ExpirationDate' => '2015-10-05',
       'Identification' => 'N/A',
-      'Instructions' => 'N\u00e3o pagar este boleto. <br> Ele n\u00e3o ser\u00e1 conciliado.',
+      'Instructions' => 'Não pagar após o vencimento.',
       'Links' => [
         {
           'Href' => 'https://apiquerysandbox.braspag.com.br/v2/sales/795cc546-8d3c-4ff3-8548-77320fc4b595',
@@ -167,6 +167,8 @@ describe BraspagRest::Payment do
     it 'features boleto-specific attributes' do
       expect(payment.digitable_line).to eq('00099.99921 50000.000005 07999.999902 3 65720000001150')
       expect(payment.barcode_number).to eq('00093657200000011509999250000000000799999990')
+      expect(payment.expiration_date).to eq('2015-10-05')
+      expect(payment.instructions).to eq('Não pagar após o vencimento.')
       expect(payment.printable_page_url).to eq('https://sandbox.pagador.com.br/post/pagador/reenvia.asp/795cc546-8d3c-4ff3-8548-77320fc4b595')
     end
   end

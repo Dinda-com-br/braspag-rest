@@ -22,6 +22,8 @@ module BraspagRest
 
     property :digitable_line, from: 'DigitableLine'
     property :barcode_number, from: 'BarCodeNumber'
+    property :expiration_date, from: 'ExpirationDate'
+    property :instructions, from: 'Instructions'
     property :printable_page_url, from: 'Url'
 
     coerce_key :credit_card, BraspagRest::CreditCard
