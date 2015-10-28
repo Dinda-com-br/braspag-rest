@@ -20,6 +20,14 @@ describe BraspagRest::Response do
         expect(BraspagRest::Response.new(gateway_response)).not_to be_success
       end
     end
+
+    context 'when gateway returns an error' do
+      let(:gateway_response) { Hashie::Mash.new(body: 'an error happened') }
+
+      it 'returns false' do
+        expect(BraspagRest::Response.new(gateway_response)).not_to be_success
+      end
+    end
   end
 
   describe '#parsed_body' do

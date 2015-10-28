@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe BraspagRest::Request do
   let(:config) { YAML.load(File.read('spec/fixtures/configuration.yml'))['test'] }
-  let(:logger) { double }
+  let(:logger) { double(info: nil) }
 
   before do
     BraspagRest.config do |configuration|
@@ -54,7 +54,7 @@ describe BraspagRest::Request do
 
       it 'returns a braspag unsuccessful response and log it as a warning' do
         allow(RestClient).to receive(:post).and_raise(RestClient::ExceptionWithResponse, gateway_response)
-        expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {}")
+        expect(logger).to receive(:warn).with("[BraspagRest][Error] message: RestClient::ExceptionWithResponse, status: 400, body: \"{}\"")
 
         response = described_class.authorize(request_id, params)
         expect(response).not_to be_success
@@ -67,7 +67,7 @@ describe BraspagRest::Request do
 
       it 'raises the exception and log it as an error' do
         allow(RestClient).to receive(:post).and_raise(RestClient::Exception, gateway_response)
-        expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {}")
+        expect(logger).to receive(:error).with("[BraspagRest][Error] message: RestClient::Exception, status: 500, body: \"{}\"")
 
         expect { described_class.authorize(request_id, params) }.to raise_error(RestClient::Exception)
       end
@@ -125,7 +125,7 @@ describe BraspagRest::Request do
 
       it 'returns a braspag unsuccessful response and log it as a warning' do
         allow(RestClient).to receive(:put).and_raise(RestClient::ExceptionWithResponse, gateway_response)
-        expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {}")
+        expect(logger).to receive(:warn).with("[BraspagRest][Error] message: RestClient::ExceptionWithResponse, status: 400, body: \"{}\"")
 
         response = described_class.void(request_id, payment_id, amount)
         expect(response).not_to be_success
@@ -138,7 +138,7 @@ describe BraspagRest::Request do
 
       it 'raises the exception and log it as an error' do
         allow(RestClient).to receive(:put).and_raise(RestClient::Exception, gateway_response)
-        expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {}")
+        expect(logger).to receive(:error).with("[BraspagRest][Error] message: RestClient::Exception, status: 500, body: \"{}\"")
 
         expect { described_class.void(request_id, payment_id, amount) }.to raise_error(RestClient::Exception)
       end
@@ -182,7 +182,7 @@ describe BraspagRest::Request do
 
       it 'raises the exception and log it as an error' do
         allow(RestClient).to receive(:get).and_raise(RestClient::ResourceNotFound)
-        expect(logger).to receive(:error).with("[BraspagRest] Resource Not Found: ")
+        expect(logger).to receive(:error).with("[BraspagRest][Error] message: Resource Not Found, status: , body: nil")
 
         expect { described_class.get_sale(request_id, payment_id) }.to raise_error(RestClient::ResourceNotFound)
       end
@@ -227,7 +227,7 @@ describe BraspagRest::Request do
 
       it 'returns a braspag unsuccessful response and log it as a warning' do
         allow(RestClient).to receive(:put).and_raise(RestClient::ExceptionWithResponse, gateway_response)
-        expect(logger).to receive(:warn).with("[BraspagRest] RestClient::ExceptionWithResponse: {}")
+        expect(logger).to receive(:warn).with("[BraspagRest][Error] message: RestClient::ExceptionWithResponse, status: 400, body: \"{}\"")
 
         response = described_class.capture(request_id, payment_id, amount)
         expect(response).not_to be_success
@@ -240,7 +240,7 @@ describe BraspagRest::Request do
 
       it 'raises the exception and log it as an error' do
         allow(RestClient).to receive(:put).and_raise(RestClient::Exception, gateway_response)
-        expect(logger).to receive(:error).with("[BraspagRest] RestClient::Exception: {}")
+        expect(logger).to receive(:error).with("[BraspagRest][Error] message: RestClient::Exception, status: 500, body: \"{}\"")
 
         expect { described_class.capture(request_id, payment_id, amount) }.to raise_error(RestClient::Exception)
       end
