@@ -22,6 +22,50 @@ Or install it yourself as:
 
 ## Usage
 
+### Configuration
+
+The gem looks for a default `config/braspag-rest.yml` configuration file, with
+environment (`RACK_ENV` or `RAILS_ENV`) settings for the Braspag API.
+
+```yml
+# config/braspag-rest.yml
+development:
+  url: 'https://apisandbox.braspag.com.br'
+  query_url: 'https://apiquerysandbox.braspag.com.br'
+  merchant_id: 'Your MerchantId here'
+  merchant_key: 'Your MerchantKey here'
+```
+
+If you want to use a different file or manually set which environment should be
+used, you can create an initializer file and use the `BraspagRest.config` method
+to set your config.
+
+```ruby
+# config/initializers/braspag-rest.rb
+BraspagRest.config do |config|
+  config.config_file_path = 'config/path/here.yml'
+  config.enviroment = 'production'
+end
+```
+
+You can use ERB blocks to interpolate values from your environment variables into
+the configuration if you are using something like [dotenv](https://github.com/bkeepers/dotenv)
+to handle configuration values that shouldn't be present in the source code.
+
+```yml
+# config/braspag-rest.yml
+development:
+  url: 'https://apisandbox.braspag.com.br'
+  query_url: 'https://apiquerysandbox.braspag.com.br'
+  merchant_id: 'Your MerchantId here'
+  merchant_key: 'Your MerchantKey here'
+production:
+  url: <%= ENV['BRASPAG_URL'] %>
+  query_url: <%= ENV['BRASPAG_QUERY_URL'] %>
+  merchant_id: <%= ENV['BRASPAG_MERCHANT_ID'] %>
+  merchant_key: <%= ENV['BRASPAG_MERCHANT_KEY'] %>
+```
+
 ### Authorize an order
 
 ```rb
@@ -97,4 +141,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/Dinda-
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-

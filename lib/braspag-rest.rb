@@ -1,8 +1,8 @@
 module BraspagRest
   def self.config
-    yield BraspagRest::Configuration.instance if block_given?
-
-    BraspagRest::Configuration.instance
+    @config ||= BraspagRest::Configuration.new
+    yield @config if block_given?
+    @config
   end
 end
 

@@ -3,8 +3,6 @@ require 'yaml'
 
 module BraspagRest
   class Configuration
-    include Singleton
-
     attr_accessor :environment, :logger, :config_file_path
 
     def config_file_path
@@ -38,7 +36,7 @@ module BraspagRest
     private
 
     def config
-      @config ||= YAML.load(File.read(config_file_path))[environment]
+      @config ||= YAML.load(ERB.new(File.read(config_file_path)).result)[environment]
     end
   end
 end

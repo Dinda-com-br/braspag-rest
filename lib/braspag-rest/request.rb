@@ -82,7 +82,7 @@ module BraspagRest
       end
 
       def config
-        @config ||= BraspagRest::Configuration.instance
+        @config ||= BraspagRest.config
       end
     end
   end
