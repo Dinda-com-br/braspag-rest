@@ -41,6 +41,7 @@ describe BraspagRest::Payment do
       'Currency' => 'BRL',
       'ProviderReturnMessage' => 'Operation Successful',
       'Amount' => 15700,
+      'CapturedAmount' => 15800,
       'Type' => 'CreditCard',
       'AuthorizationCode' => '058475',
       'PaymentId' => '1ff114b4-32bb-4fe2-b1f2-ef79822ad5e1',
@@ -88,6 +89,7 @@ describe BraspagRest::Payment do
     it 'initializes a payment using braspag response format' do
       expect(payment.type).to eq('CreditCard')
       expect(payment.amount).to eq(15700)
+      expect(payment.captured_amount).to eq(15800)
       expect(payment.provider).to eq('Simulado')
       expect(payment.installments).to eq(1)
       expect(payment.credit_card).to be_an_instance_of(BraspagRest::CreditCard)
