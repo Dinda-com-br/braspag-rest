@@ -28,7 +28,7 @@ describe BraspagRest::Request do
 
     let(:params) {
       {
-        'Customer' => { 'Name' => 'Maria' }
+        'Customer' => { 'Name' => 'Maria', 'Identity' => '790.010.515-88' }
       }
     }
 
