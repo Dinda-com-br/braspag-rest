@@ -5,20 +5,33 @@ class Address < Hashie::IUTrash
   property :number, from: 'Number'
 end
 
+class Phone < Hashie::IUTrash
+  property :code, from: 'Code'
+  property :number, from: 'Number'
+end
+
 class Person < Hashie::IUTrash
+  include Hashie::Extensions::Coercion
+
   property :name, from: 'Name'
-  property :phone, from: 'Telephone'
+  property :phones, from: 'Telephones'
   property :main_address, from: 'MainAddress', with: ->(values) { Address.new(values) }
+
+  coerce_key :phones, Array[Phone]
 end
 
 describe Hashie::IUTrash do
-  let(:params) { { 'Name' => 'foo', 'Telephone' => 123, 'MainAddress' => { 'Street' => 'Rua 1', 'Number' => 123 } } }
+  let(:params) do
+    {
+      'Name' => 'foo',
+      'MainAddress' => { 'Street' => 'Rua 1', 'Number' => 123 }
+    }
+  end
 
   subject(:person) { Person.new(params) }
 
   it 'translates parameters according to declared on class' do
     expect(person.name).to eq('foo')
-    expect(person.phone).to eq(123)
     expect(person.main_address.street).to eq('Rua 1')
     expect(person.main_address.number).to eq(123)
   end
@@ -29,6 +42,16 @@ describe Hashie::IUTrash do
 
   describe '#inverse_attributes' do
     it 'returns a hash with their properties using inverse translated' do
+      expect(person.inverse_attributes).to eq(params)
+    end
+
+    it 'nested inverse attributes' do
+      params['Telephones'] = [
+         { 'Code' => '+55', 'Number' => '555-555' },
+         { 'Code' => '+1', 'Number' => '222-222' }
+      ]
+      person = Person.new(params)
+
       expect(person.inverse_attributes).to eq(params)
     end
   end
