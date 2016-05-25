@@ -93,6 +93,87 @@ sale = BraspagRest::Sale.new(
 sale.save
 ```
 
+### Authorize an order support fraud analysis fields
+
+```rb
+sale = BraspagRest::Sale.new(
+  order_id: '123456',
+  request_id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+  customer: {
+    name: 'Comprador Teste'
+  },
+  payment: {
+    type: 'CreditCard',
+    amount: 15700,
+    provider: 'Simulado',
+    installments: 1,
+    credit_card: {
+      number: '0000000000000001',
+      holder: 'Teste Holder',
+      expiration_date: '12/2021',
+      security_code: '123',
+      brand: 'Visa'
+    }
+    fraud_analysis: {
+      sequence: 'AuthorizeFirst',
+      sequence_criteria: 'Always',
+      capture_on_low_risk: false,
+      void_on_high_risk: false,
+      browser: {
+        cookies_accepted: false,
+        email: 'compradorteste@live.com',
+        host_name: 'Teste',
+        ip_address: '202.190.150.350',
+        type: 'Chrome'
+      },
+      cart: {
+        is_gift: false,
+        returns_accepted: true,
+        items: [
+          {
+            gift_category: 'Undefined',
+            host_hedge: 'Off',
+            non_sensical_hedge: 'Off',
+            obscenities_hedge: 'Off',
+            phone_hedge: 'Off',
+            name: 'ItemTeste',
+            quantity: 1,
+            sku: '201411170235134521346',
+            unit_price: 123,
+            risk: 'High',
+            time_hedge: 'Normal',
+            type: 'AdultContent',
+            velocity_hedge: 'High'
+          }
+        ]
+      },
+      merchant_defined_fields: [
+        {
+          id: 9,
+          value: 'web'
+        }
+      ],
+      shipping: {
+        addressee: 'Sr Comprador Teste',
+        method: 'LowCost',
+        phone: '21114740'
+      },
+      travel: {
+        departure_time: '2010-01-02',
+        journey_type: 'Ida',
+        route: 'MAO-RJO',
+        legs: [{
+          destination: 'GYN',
+          origin: 'VCP'
+        }]
+      }
+    }
+  }
+)
+
+sale.save
+```
+
 And to create a protected credit card, you should set the credit card saved as true:
 
 ```rb
