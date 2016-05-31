@@ -27,6 +27,22 @@ module BraspagRest
     property :instructions, from: 'Instructions'
     property :printable_page_url, from: 'Url'
 
+    property :currency, from: 'Currency'
+    property :country, from: 'Country'
+    property :service_tax_amount, from: 'ServiceTaxAmount'
+    property :interest, from: 'Interest'
+    property :capture, from: 'Capture'
+    property :authenticate, from: 'Authenticate'
+    property :soft_descriptor, from: 'SoftDescriptor'
+    property :fraud_analysis, from: 'FraudAnalysis'
+
+    # Response fields
+    property :received_date, from: 'ReceivedDate'
+    property :provider_return_code, from: 'ProviderReturnCode'
+    property :provider_return_message, from: 'ProviderReturnMessage'
+    property :links, from: 'Links'
+
+    coerce_key :fraud_analysis, BraspagRest::FraudAnalysis
     coerce_key :credit_card, BraspagRest::CreditCard
 
     def authorized?
