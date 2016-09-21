@@ -47,8 +47,8 @@ describe Hashie::IUTrash do
 
     it 'nested inverse attributes' do
       params['Telephones'] = [
-         { 'Code' => '+55', 'Number' => '555-555' },
-         { 'Code' => '+1', 'Number' => '222-222' }
+         { :code => '+55', :number => '555-555' },
+         { :code => '+1', :number => '222-222' }
       ]
       person = Person.new(params)
 
