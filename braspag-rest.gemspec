@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
   spec.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_dependency "rest-client", "~> 1.8"
+  spec.add_dependency "rest-client", "~> 2.0"
   spec.add_dependency "hashie", "~> 3.4"
 
   spec.add_development_dependency "bundler", "~> 1.10"
