@@ -33,6 +33,10 @@ module BraspagRest
       config['merchant_key']
     end
 
+    def request_timeout
+      config.fetch('request_timeout', 60)
+    end
+
     private
 
     def config

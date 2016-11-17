@@ -9,7 +9,13 @@ module BraspagRest
         config.logger.info("[BraspagRest][Authorize] endpoint: #{sale_url}, params: #{params.to_json}") if config.log_enabled?
 
         execute_braspag_request do
-          RestClient.post(sale_url, params.to_json, default_headers.merge('RequestId' => request_id))
+          RestClient::Request.execute(
+            method: :post,
+            url: sale_url,
+            payload: params.to_json,
+            headers: default_headers.merge('RequestId' => request_id),
+            timeout: config.request_timeout
+          )
         end
       end
 
@@ -17,7 +23,12 @@ module BraspagRest
         config.logger.info("[BraspagRest][Void] endpoint: #{void_url(payment_id, amount)}") if config.log_enabled?
 
         execute_braspag_request do
-          RestClient.put(void_url(payment_id, amount), nil, default_headers.merge('RequestId' => request_id))
+          RestClient::Request.execute(
+            method: :put,
+            url: void_url(payment_id, amount),
+            headers: default_headers.merge('RequestId' => request_id),
+            timeout: config.request_timeout
+          )
         end
       end
 
@@ -25,7 +36,12 @@ module BraspagRest
         config.logger.info("[BraspagRest][GetSale] endpoint: #{search_sale_url(payment_id)}") if config.log_enabled?
 
         execute_braspag_request do
-          RestClient.get(search_sale_url(payment_id), default_headers.merge('RequestId' => request_id))
+          RestClient::Request.execute(
+            method: :get,
+            url: search_sale_url(payment_id),
+            headers: default_headers.merge('RequestId' => request_id),
+            timeout: config.request_timeout
+          )
         end
       end
 
@@ -33,7 +49,13 @@ module BraspagRest
         config.logger.info("[BraspagRest][Capture] endpoint: #{capture_url(payment_id)}, amount: #{amount}") if config.log_enabled?
 
         execute_braspag_request do
-          RestClient.put(capture_url(payment_id), { Amount: amount }.to_json, default_headers.merge('RequestId' => request_id))
+          RestClient::Request.execute(
+            method: :put,
+            url: capture_url(payment_id),
+            payload: { Amount: amount }.to_json,
+            headers: default_headers.merge('RequestId' => request_id),
+            timeout: config.request_timeout
+          )
         end
       end
 
@@ -47,6 +69,9 @@ module BraspagRest
         BraspagRest::Response.new(gateway_response)
       rescue RestClient::ResourceNotFound => e
         config.logger.error("[BraspagRest][Error] message: #{e.message}, status: #{e.http_code}, body: #{e.http_body.inspect}") if config.log_enabled?
+        raise
+      rescue RestClient::RequestTimeout => e
+        config.logger.error("[BraspagRest][Timeout] message: #{e.message}") if config.log_enabled?
         raise
       rescue RestClient::ExceptionWithResponse => e
         config.logger.warn("[BraspagRest][Error] message: #{e.message}, status: #{e.http_code}, body: #{e.http_body.inspect}") if config.log_enabled?
