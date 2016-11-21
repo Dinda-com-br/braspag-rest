@@ -34,6 +34,7 @@ development:
   query_url: 'https://apiquerysandbox.braspag.com.br'
   merchant_id: 'Your MerchantId here'
   merchant_key: 'Your MerchantKey here'
+  request_timeout: 60
 ```
 
 If you want to use a different file or manually set which environment should be
@@ -59,11 +60,13 @@ development:
   query_url: 'https://apiquerysandbox.braspag.com.br'
   merchant_id: 'Your MerchantId here'
   merchant_key: 'Your MerchantKey here'
+  request_timeout: 60
 production:
   url: <%= ENV['BRASPAG_URL'] %>
   query_url: <%= ENV['BRASPAG_QUERY_URL'] %>
   merchant_id: <%= ENV['BRASPAG_MERCHANT_ID'] %>
   merchant_key: <%= ENV['BRASPAG_MERCHANT_KEY'] %>
+  request_timeout: <%= ENV['BRASPAG_REQUEST_TIMEOUT'] %>
 ```
 
 ### Authorize an order
