@@ -68,7 +68,9 @@ module BraspagRest
 
         BraspagRest::Response.new(gateway_response)
       rescue RestClient::ResourceNotFound => e
-        config.logger.error("[BraspagRest][Error] message: #{e.message}, status: #{e.http_code}, body: #{e.http_body.inspect}") if config.log_enabled?
+        # Explicitly message due to Rest Client RestClient::NotFound normalization:
+        # https://github.com/rest-client/rest-client/blob/v2.0.0/lib/restclient/exceptions.rb#L90
+        config.logger.error("[BraspagRest][Error] message: Resource Not Found, status: #{e.http_code}, body: #{e.http_body.inspect}") if config.log_enabled?
         raise
       rescue RestClient::RequestTimeout => e
         config.logger.error("[BraspagRest][Timeout] message: #{e.message}") if config.log_enabled?
