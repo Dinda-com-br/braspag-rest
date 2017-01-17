@@ -45,6 +45,19 @@ module BraspagRest
         end
       end
 
+      def get_sales_for_merchant_order_id(request_id, merchant_order_id)
+        config.logger.info("[BraspagRest][GetSale] endpoint: #{search_sales_for_merchant_order_id_url(merchant_order_id)}") if config.log_enabled?
+
+        execute_braspag_request do
+          RestClient::Request.execute(
+            method: :get,
+            url: search_sales_for_merchant_order_id_url(merchant_order_id),
+            headers: default_headers.merge('RequestId' => request_id),
+            timeout: config.request_timeout
+          )
+        end
+      end
+
       def capture(request_id, payment_id, amount)
         config.logger.info("[BraspagRest][Capture] endpoint: #{capture_url(payment_id)}, amount: #{amount}") if config.log_enabled?
 
@@ -95,6 +108,13 @@ module BraspagRest
 
       def capture_url(payment_id)
         sale_url + payment_id.to_s + CAPTURE_ENDPOINT
+      end
+
+      def search_sales_for_merchant_order_id_url(merchant_order_id)
+        url = URI.parse(config.query_url)
+        url.path = SALE_ENDPOINT
+        url.query = "merchantOrderId=#{merchant_order_id}"
+        url.to_s
       end
 
       def default_headers

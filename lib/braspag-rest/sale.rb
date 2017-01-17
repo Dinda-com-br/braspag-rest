@@ -18,6 +18,13 @@ module BraspagRest
       new(response.parsed_body.merge('RequestId' => request_id))
     end
 
+    def self.find_by_order_id(request_id, order_id)
+      response = BraspagRest::Request.get_sales_for_merchant_order_id(request_id, order_id)
+      payments = response.parsed_body['Payments']
+
+      payments.map { |payment| BraspagRest::Sale.find(request_id, payment['PaymentId']) }
+    end
+
     def save
       response = BraspagRest::Request.authorize(request_id, inverse_attributes)
 
