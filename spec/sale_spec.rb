@@ -258,6 +258,31 @@ describe BraspagRest::Sale do
     end
   end
 
+  describe '.find_by_order_id' do
+    let(:request_id) { SecureRandom.uuid }
+    let(:order_id) { '1234567890' }
+
+    before do
+      allow(BraspagRest::Request).to receive(:get_sales_for_merchant_order_id).and_return(
+        double(parsed_body: { 'Payments' => [{ 'PaymentId' => '1234567'}] })
+      )
+
+      allow(BraspagRest::Sale).to receive(:find).and_return BraspagRest::Sale.new
+    end
+
+    subject { BraspagRest::Sale.find_by_order_id(request_id, order_id) }
+
+    it 'filters all sales for an order_id' do
+      expect(BraspagRest::Request).to receive(:get_sales_for_merchant_order_id).with(request_id, order_id)
+      subject
+    end
+
+    it 'return a list of BraspagRest::Sale' do
+      is_expected.to be_an Array
+      expect(subject.all? { |payment| payment.is_a?(BraspagRest::Sale) }).to be_truthy
+    end
+  end
+
   describe '#reload' do
     before { allow(BraspagRest::Request).to receive(:get_sale).and_return(double(parsed_body: braspag_response)) }
 

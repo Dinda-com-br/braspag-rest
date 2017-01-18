@@ -237,6 +237,32 @@ describe BraspagRest::Request do
     end
   end
 
+  describe '.get_sales_for_merchant_order_id' do
+    let(:logger) { double(info: nil) }
+    let(:request_id) { SecureRandom.uuid }
+    let(:transaction_id) { '1234567890' }
+
+    before do
+      allow(BraspagRest.config).to receive(:logger).and_return logger
+      allow(RestClient::Request).to receive(:execute)
+    end
+
+    it 'logs the requested url' do
+      expect(logger).to receive(:info).with("[BraspagRest][GetSale] endpoint: https://apiquerysandbox.braspag.com.br/v2/sales/?merchantOrderId=#{transaction_id}")
+      BraspagRest::Request.get_sales_for_merchant_order_id(request_id, transaction_id)
+    end
+
+    it 'request with the correct parameters' do
+      expect(RestClient::Request).to receive(:execute).with(
+        method: :get,
+        url: "https://apiquerysandbox.braspag.com.br/v2/sales/?merchantOrderId=#{transaction_id}",
+        headers: described_class.send(:default_headers).merge('RequestId' => request_id),
+        timeout: BraspagRest.config.request_timeout
+      )
+      BraspagRest::Request.get_sales_for_merchant_order_id(request_id, transaction_id)
+    end
+  end
+
   describe '.capture' do
     let(:payment_id) { '123456' }
     let(:capture_url) { config['url'] + '/v2/sales/' + payment_id + '/capture' }
