@@ -22,7 +22,7 @@ module BraspagRest
       response = BraspagRest::Request.get_sales_for_merchant_order_id(request_id, order_id)
       payments = response.parsed_body['Payments']
 
-      payments.map { |payment| BraspagRest::Sale.find(request_id, payment['PaymentId']) }
+      Array(payments).map { |payment| BraspagRest::Sale.find(request_id, payment['PaymentId']) }
     end
 
     def save
