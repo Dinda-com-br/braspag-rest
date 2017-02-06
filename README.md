@@ -194,7 +194,15 @@ credit_card.saved = true
 ```rb
 sale = BraspagRest::Sale.find('REQUEST_ID', 'PAYMENT_ID')
 sale.customer.name
-=> Maria
+=> "Maria"
+```
+
+### Find sales for a store, aka: MerchantOrderId
+
+```rb
+sales = BraspagRest::Sale.find_by_order_id('REQUEST_ID', 'MERCHANT_ORDER_ID')
+sales.map { |sale| sale.customer.name }
+=> ["Maria", "Joana"]
 ```
 
 ### Cancel a sale

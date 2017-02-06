@@ -277,9 +277,22 @@ describe BraspagRest::Sale do
       subject
     end
 
-    it 'return a list of BraspagRest::Sale' do
+    it 'returns a list of BraspagRest::Sale' do
       is_expected.to be_an Array
       expect(subject.all? { |payment| payment.is_a?(BraspagRest::Sale) }).to be_truthy
+    end
+
+    context 'when no result is returned' do
+      before do
+        allow(BraspagRest::Request).to receive(:get_sales_for_merchant_order_id).and_return(
+          double(parsed_body: { 'Payments' => nil })
+        )
+      end
+
+      it 'returns an empty list' do
+        is_expected.to be_an Array
+        is_expected.to be_empty
+      end
     end
   end
 
