@@ -172,6 +172,7 @@ describe BraspagRest::Payment do
       expect(payment.expiration_date).to eq('2015-10-05')
       expect(payment.instructions).to eq('Não pagar após o vencimento.')
       expect(payment.printable_page_url).to eq('https://sandbox.pagador.com.br/post/pagador/reenvia.asp/795cc546-8d3c-4ff3-8548-77320fc4b595')
+      expect(payment.boleto_number).to eq('7-4')
     end
   end
 end
