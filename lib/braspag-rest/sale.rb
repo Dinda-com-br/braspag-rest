@@ -41,8 +41,7 @@ module BraspagRest
       response = BraspagRest::Request.void(request_id, payment.id, amount)
 
       if response.success?
-        voided_amount = amount ? payment.voided_amount.to_i + amount : payment.amount
-        self.payment.initialize_attributes(voided_amount: voided_amount, voided_date: payment.voided_date)
+        reload
       else
         initialize_errors(response.parsed_body)
       end
@@ -64,10 +63,11 @@ module BraspagRest
 
     def reload
       if !request_id.nil? && payment && !payment.id.nil?
-        self.class.find(request_id, payment.id)
-      else
-        self
+        reloaded_reference = self.class.find(request_id, payment.id)
+        self.initialize_attributes(reloaded_reference.inverse_attributes)
       end
+
+      self
     end
 
     private
