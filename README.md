@@ -210,6 +210,15 @@ sales.map { |sale| sale.customer.name }
 ```rb
 sale = BraspagRest::Sale.find('REQUEST_ID', 'PAYMENT_ID')
 sale.cancel
+
+sale.voided_amount
+=> 30017
+
+sale.voided_date
+=> "2017-09-11 16:53:03"
+
+sale.payment.refunds
+=> [{:amount=>30017, :status=>3, :received_date=>"2017-09-11T16:53:03.407"}]
 ```
 
 ### Capture a sale
