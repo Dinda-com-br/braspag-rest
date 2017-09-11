@@ -128,7 +128,7 @@ describe BraspagRest::Sale do
     context "when no amount is given" do
       before do
         allow(BraspagRest::Request).to receive(:void).with('xxx-xxx-xxx', 123, nil)
-          .and_return(double(success?: true, parsed_body: {}))
+          .and_return(double(success?: true, parsed_body: {voided_date: '14'}))
       end
 
       it 'calls braspag gateway with request_id, payment_id and no payment amount' do
@@ -139,6 +139,11 @@ describe BraspagRest::Sale do
       it "updates the sale's voided amount with the full transaction amount" do
         sale.cancel
         expect(sale.payment.voided_amount).to eq(1000)
+      end
+
+      it "updates the sale's voided date" do
+        sale.cancel
+        expect(sale.payment.voided_date).to eq(1000)
       end
 
       it "reports success" do

@@ -42,7 +42,7 @@ module BraspagRest
 
       if response.success?
         voided_amount = amount ? payment.voided_amount.to_i + amount : payment.amount
-        self.payment.initialize_attributes(voided_amount: voided_amount)
+        self.payment.initialize_attributes(voided_amount: voided_amount, voided_date: payment.voided_date)
       else
         initialize_errors(response.parsed_body)
       end

@@ -5,6 +5,7 @@ module BraspagRest
     STATUS_AUTHORIZED = 1
     STATUS_CONFIRMED = 2
     STATUS_VOIDED = 10
+    STATUS_REFUNDED = 11
 
     property :id, from: 'PaymentId'
     property :type, from: 'Type'
@@ -20,6 +21,9 @@ module BraspagRest
     property :reason_code, from: 'ReasonCode'
     property :reason_message, from: 'ReasonMessage'
     property :voided_amount, from: 'VoidedAmount'
+    property :voided_date, from: 'VoidedDate'
+
+    property :refunds, from: 'Refunds'
 
     property :digitable_line, from: 'DigitableLine'
     property :barcode_number, from: 'BarCodeNumber'
@@ -44,6 +48,7 @@ module BraspagRest
 
     coerce_key :fraud_analysis, BraspagRest::FraudAnalysis
     coerce_key :credit_card, BraspagRest::CreditCard
+    coerce_key :refunds, Array[BraspagRest::Refund]
 
     def authorized?
       status.to_i.eql?(STATUS_AUTHORIZED)
@@ -55,6 +60,10 @@ module BraspagRest
 
     def cancelled?
       status.to_i.eql?(STATUS_VOIDED)
+    end
+
+    def refunded?
+      status.to_i.eql?(STATUS_REFUNDED)
     end
   end
 end
