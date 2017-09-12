@@ -32,7 +32,7 @@ describe BraspagRest::Payment do
         'CardNumber' => '000000******0001',
         'Holder' => 'Teste Holder'
       },
-      'ReceivedDate' => '2015-06-25 10=>18=>32',
+      'ReceivedDate' => '2015-06-25 10:18:32',
       'ProviderReturnCode' => '4',
       'ReasonCode' => 0,
       'ProofOfSale' => '1832104',
@@ -49,7 +49,7 @@ describe BraspagRest::Payment do
       'Installments' => 1,
       'Recurrent' => false,
       'VoidedAmount' => 1245,
-      'VoidedDate' => '2015-06-25 10=>18=>32',
+      'VoidedDate' => '2015-06-25 10:18:32',
       'Status' => 1
     }
   }
