@@ -32,7 +32,7 @@ describe BraspagRest::Payment do
         'CardNumber' => '000000******0001',
         'Holder' => 'Teste Holder'
       },
-      'ReceivedDate' => '2015-06-25 10=>18=>32',
+      'ReceivedDate' => '2015-06-25 10:18:32',
       'ProviderReturnCode' => '4',
       'ReasonCode' => 0,
       'ProofOfSale' => '1832104',
@@ -48,6 +48,8 @@ describe BraspagRest::Payment do
       'Authenticate' => false,
       'Installments' => 1,
       'Recurrent' => false,
+      'VoidedAmount' => 1245,
+      'VoidedDate' => '2015-06-25 10:18:32',
       'Status' => 1
     }
   }
@@ -163,6 +165,26 @@ describe BraspagRest::Payment do
     end
   end
 
+  describe '#refunded?' do
+    subject(:sale) { BraspagRest::Payment.new(params) }
+
+    context 'when status is 11' do
+      let(:params) { { status: 11 } }
+
+      it 'returns refunded' do
+        expect(sale).to be_refunded
+      end
+    end
+
+    context 'when status is not 11' do
+      let(:params) { { status: 3 } }
+
+      it 'returns not refunded' do
+        expect(sale).not_to be_refunded
+      end
+    end
+  end
+
   describe 'boleto payments' do
     subject(:payment) { BraspagRest::Payment.new(boleto_payment) }
 
@@ -173,6 +195,33 @@ describe BraspagRest::Payment do
       expect(payment.instructions).to eq('Não pagar após o vencimento.')
       expect(payment.printable_page_url).to eq('https://sandbox.pagador.com.br/post/pagador/reenvia.asp/795cc546-8d3c-4ff3-8548-77320fc4b595')
       expect(payment.boleto_number).to eq('7-4')
+    end
+  end
+
+  describe 'refunded credit card payment' do
+    let(:refunded_credit_card_payment) do
+      attributes = credit_card_payment.dup
+      attributes['Refunds'] = [{
+        'Amount' => 1234,
+        'Status' => 11,
+        'ReceivedDate' => '2017-09-06T16:22:46.777'
+      }]
+
+      attributes['VoidedAmount'] = 1234
+      attributes['VoidedDate'] = '2017-09-06T16:22:46.777'
+      attributes
+    end
+
+    subject(:payment) { BraspagRest::Payment.new(refunded_credit_card_payment) }
+
+    it 'assigns refund references' do
+      refund = payment.refunds.first
+
+      expect(payment.refunds.count).to eq 1
+      expect(refund).to be_succes
+      expect(refund.amount).to eq 1234
+      expect(refund.status).to eq 11
+      expect(refund.received_date).to eq '2017-09-06T16:22:46.777'
     end
   end
 end
