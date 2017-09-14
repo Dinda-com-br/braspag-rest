@@ -26,6 +26,7 @@ module BraspagRest
     property :expiration_date, from: 'ExpirationDate'
     property :instructions, from: 'Instructions'
     property :printable_page_url, from: 'Url'
+    property :boleto_number, from: 'BoletoNumber'
 
     property :currency, from: 'Currency'
     property :country, from: 'Country'
