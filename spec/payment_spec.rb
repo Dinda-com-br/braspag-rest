@@ -41,6 +41,7 @@ describe BraspagRest::Payment do
       'Currency' => 'BRL',
       'ProviderReturnMessage' => 'Operation Successful',
       'Amount' => 15700,
+      'BoletoNumber' => '2017091101',
       'CapturedAmount' => 15800,
       'Type' => 'CreditCard',
       'AuthorizationCode' => '058475',
@@ -89,6 +90,7 @@ describe BraspagRest::Payment do
     it 'initializes a payment using braspag response format' do
       expect(payment.type).to eq('CreditCard')
       expect(payment.amount).to eq(15700)
+      expect(payment.boleto_number).to eq('2017091101')
       expect(payment.captured_amount).to eq(15800)
       expect(payment.provider).to eq('Simulado')
       expect(payment.installments).to eq(1)

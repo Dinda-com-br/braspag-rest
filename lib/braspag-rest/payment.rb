@@ -9,6 +9,7 @@ module BraspagRest
     property :id, from: 'PaymentId'
     property :type, from: 'Type'
     property :amount, from: 'Amount'
+    property :boleto_number, from: 'BoletoNumber'
     property :captured_amount, from: 'CapturedAmount'
     property :status, from: 'Status'
     property :provider, from: 'Provider'
