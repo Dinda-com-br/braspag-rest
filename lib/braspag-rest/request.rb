@@ -77,9 +77,9 @@ module BraspagRest
       def execute_braspag_request(&block)
         gateway_response = block.call
 
-        config.logger.info("[BraspagRest][Response] gateway_response: #{gateway_response.inspect}") if config.log_enabled?
-
-        BraspagRest::Response.new(gateway_response)
+        BraspagRest::Response.new(gateway_response).tap do |response|
+          config.logger.info("[BraspagRest][Response] gateway_response: #{response.parsed_body}") if config.log_enabled?
+        end
       rescue RestClient::ResourceNotFound => e
         # Explicitly message due to Rest Client RestClient::NotFound normalization:
         # https://github.com/rest-client/rest-client/blob/v2.0.0/lib/restclient/exceptions.rb#L90
