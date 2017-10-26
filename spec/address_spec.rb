@@ -21,7 +21,7 @@ describe BraspagRest::Address do
       expect(address.street).to eq('Alameda Xingu')
       expect(address.number).to eq('512')
       expect(address.complement).to eq('27 andar')
-      expect(address.zip_code).to eq('12345987')
+      expect(address.zipcode).to eq('12345987')
       expect(address.city).to eq('São Paulo')
       expect(address.state).to eq('SP')
       expect(address.country).to eq('BRA')
