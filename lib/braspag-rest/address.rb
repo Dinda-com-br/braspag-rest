@@ -3,7 +3,7 @@ module BraspagRest
     property :street, from: 'Street'
     property :number, from: 'Number'
     property :complement, from: 'Complement'
-    property :zip_code, from: 'ZipCode'
+    property :zipcode, from: 'ZipCode'
     property :city, from: 'City'
     property :state, from: 'State'
     property :country, from: 'Country'
