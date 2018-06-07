@@ -1,3 +1,4 @@
+require 'json'
 module BraspagRest
   class Request
     class << self

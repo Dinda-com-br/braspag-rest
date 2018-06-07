@@ -182,7 +182,7 @@ describe BraspagRest::Request do
 
       it 'raises the exception and log it as an error' do
         allow(RestClient).to receive(:get).and_raise(RestClient::ResourceNotFound)
-        expect(logger).to receive(:error).with("[BraspagRest][Error] message: Resource Not Found, status: , body: nil")
+        expect(logger).to receive(:error).with("[BraspagRest][Error] message: Not Found, status: , body: nil")
 
         expect { described_class.get_sale(request_id, payment_id) }.to raise_error(RestClient::ResourceNotFound)
       end
