@@ -6,7 +6,7 @@ describe BraspagRest::CreditCard do
        'ExpirationDate' => '12/2021',
        'Brand' => 'Visa',
        'CardNumber' => '000000******0001',
-       'Holder' => 'Teste Holder'
+       'Holder' => 'Teste Holder',
        'SecurityCode' => 123
     }
   }
