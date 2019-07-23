@@ -27,7 +27,6 @@ module BraspagRest
 
     def save
       response = BraspagRest::Request.authorize(request_id, inverse_attributes)
-
       if response.success?
         initialize_attributes(response.parsed_body)
       else
