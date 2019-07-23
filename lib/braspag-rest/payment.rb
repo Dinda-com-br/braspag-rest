@@ -16,13 +16,18 @@ module BraspagRest
     property :provider, from: 'Provider'
     property :installments, from: 'Installments'
     property :credit_card, from: 'CreditCard', with: ->(values) { BraspagRest::CreditCard.new(values) }
+    property :debit_card, from: 'DebitCard', with: ->(values) { BraspagRest::DebitCard.new(values) }
     property :transaction_id, from: 'AcquirerTransactionId'
     property :authorization_code, from: 'AuthorizationCode'
+    property :authorization_url, from: 'AuthenticationUrl'
     property :proof_of_sale, from: 'ProofOfSale'
     property :reason_code, from: 'ReasonCode'
     property :reason_message, from: 'ReasonMessage'
     property :voided_amount, from: 'VoidedAmount'
     property :voided_date, from: 'VoidedDate'
+
+    property :recurrent, from: 'Recurrent'
+    property :return_url, from: 'ReturnUrl'
 
     property :refunds, from: 'Refunds'
 
@@ -50,6 +55,7 @@ module BraspagRest
 
     coerce_key :fraud_analysis, BraspagRest::FraudAnalysis
     coerce_key :credit_card, BraspagRest::CreditCard
+    coerce_key :debit_card, BraspagRest::DebitCard
     coerce_key :refunds, Array[BraspagRest::Refund]
 
     def authorized?

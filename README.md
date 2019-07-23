@@ -69,7 +69,7 @@ production:
   request_timeout: <%= ENV['BRASPAG_REQUEST_TIMEOUT'] %>
 ```
 
-### Authorize an order
+### Authorize an order (CreditCard)
 
 ```rb
 sale = BraspagRest::Sale.new(
@@ -94,6 +94,41 @@ sale = BraspagRest::Sale.new(
 )
 
 sale.save
+```
+
+### Authorize an order (DebitCard)
+
+```rb
+sale = BraspagRest::Sale.new(
+  order_id: '123456',
+  request_id: 'xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx',
+  customer: {
+    name: 'Comprador Teste'
+  },
+  payment:  {
+    type: 'DebitCard',
+    amount: 15700,
+    currency: 'BRL',
+    country: 'BRA',                                        
+    provider: 'Simulado',
+    installments: 1,
+    return_url: "http://localhost:3000/#{sale_id}",
+    capture: true,
+    authenticate: true,
+    recurrent: false,
+    soft_descriptor: "FATURE DESC",
+    debit_card:  {
+      number: '0000000000000001',
+      holder: 'Teste Holder',
+      expiration_date: '12/2021',
+      security_code: '123',
+      brand: 'Visa'
+  }
+)
+
+sale.save
+
+redirect_to sale.payment.authorization_url
 ```
 
 ### Authorize an order support fraud analysis fields
