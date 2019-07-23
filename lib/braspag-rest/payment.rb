@@ -16,6 +16,7 @@ module BraspagRest
     property :provider, from: 'Provider'
     property :installments, from: 'Installments'
     property :credit_card, from: 'CreditCard', with: ->(values) { BraspagRest::CreditCard.new(values) }
+    property :debit_card, from: 'DebitCard', with: ->(values) { BraspagRest::DebitCard.new(values) }
     property :transaction_id, from: 'AcquirerTransactionId'
     property :authorization_code, from: 'AuthorizationCode'
     property :proof_of_sale, from: 'ProofOfSale'
