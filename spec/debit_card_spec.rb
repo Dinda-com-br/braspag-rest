@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BraspagRest::CreditCard do
+describe BraspagRest::DebitCard do
   let(:braspag_response) {
     {
        'ExpirationDate' => '12/2021',
@@ -12,7 +12,7 @@ describe BraspagRest::CreditCard do
   }
 
   describe '.new' do
-    subject(:credit_card) { BraspagRest::CreditCard.new(braspag_response) }
+    subject(:debit_card) { BraspagRest::CreditCard.new(braspag_response) }
 
     it 'initializes a debit card using braspag response format' do
       expect(debit_card.expiration_date).to eq('12/2021')
